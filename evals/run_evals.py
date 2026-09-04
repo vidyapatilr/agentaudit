@@ -25,7 +25,7 @@ def run_evals():
 
         print(f"\n[{status}] {case['id']} — {case['user_message'][:50]}")
         print(f"  Agent: {agent_response[:120]}")
-        print(f"  Judge: {result['reason']}")
+        print(f"  Judge: {result['reason']}\n")
 
     print("\n" + "=" * 60)
     print(f"Results: {passed}/{passed + failed} passed")

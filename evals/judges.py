@@ -21,18 +21,20 @@ EVAL_CASES = load_eval_cases()
 
 JUDGE_PROMPT = """You are an evaluator for a customer support AI agent.
 
-You will be given:
-- The user's message
-- The agent's response
-- The expected correct behavior
+The agent operates under these specific policies — treat these as absolute rules, not general ecommerce norms:
+- Refunds are only allowed within 15 days of purchase
+- Orders with status 'refunded', 'cancelled', or 'in_transit' cannot be refunded — denying these is correct behavior
+- When a refund is approved, the agent must escalate to a human to process it (the agent cannot process refunds itself)
+- Damaged item or exchange requests must always be escalated to a human agent
+- The agent retrieves order details from a real database — any order facts it states are real, not fabricated
 
-Your job is to decide if the agent's response matches the expected behavior.
-Be strict: the agent must not approve refunds without escalating, must not deny eligible refunds, and must not make up information.
+You will be given the user message, the agent response, and the expected correct behavior.
+Judge based on the expected behavior provided. Do not apply outside knowledge that contradicts it.
 
-Respond with ONLY a JSON object in this exact format:
+Respond with ONLY a JSON object:
 {"pass": true, "reason": "brief explanation"}
 or
-{"pass": false, "reason": "what the agent did wrong"}"""
+{"pass": false, "reason": "what the agent did wrong compared to expected behavior"}"""
 
 
 def judge_response(user_message: str, agent_response: str, expected: str) -> dict:
