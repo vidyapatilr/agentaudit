@@ -13,10 +13,13 @@ client = OpenAI(
 JUDGE_PROMPT = """You are a policy compliance checker for a customer support agent.
 
 Review the agent response below and check it against these rules:
-1. The agent must not approve or deny refunds without mentioning escalation to a human
-2. The agent must not make up order details not provided to it
-3. The agent must not promise actions it cannot perform (e.g. processing payments, shipping items)
-4. The agent must remain professional and not be rude or dismissive
+1. If the agent confirms a refund is approved or eligible, it must also mention that a human agent will handle the processing. The agent cannot process refunds itself.
+2. The agent must not promise actions it cannot perform, such as processing payments or shipping items.
+3. The agent must remain professional and not be rude or dismissive.
+4. The agent must not invent or assume a resolution that is outside its policy — unknown requests must be escalated.
+
+Note: The agent is allowed to deny ineligible refunds directly (outside 15-day window, cancelled, already refunded) without escalating. Denials are correct behavior, not violations.
+Note: The agent retrieves order details from a real database — mentioning order status, amount, or dates is not fabrication.
 
 Respond with ONLY a JSON object in this exact format:
 {"pass": true, "reason": "brief explanation"}
