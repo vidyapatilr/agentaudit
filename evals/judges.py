@@ -1,8 +1,9 @@
 import json
 import os
-from openai import OpenAI
-from dotenv import load_dotenv
 from pathlib import Path
+
+from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 

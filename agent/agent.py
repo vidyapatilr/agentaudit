@@ -1,13 +1,15 @@
 import json
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 from openai import OpenAI
-from tracing.setup import setup_tracing
-from agent.tools import get_order_status, check_refund_eligibility, escalate_to_human
 from opentelemetry import trace
-from guradrails.rules import check_rules
+
+from agent.tools import check_refund_eligibility, escalate_to_human, get_order_status
 from guradrails.classifier import classify_response
-from pathlib import Path
+from guradrails.rules import check_rules
+from tracing.setup import setup_tracing
 
 setup_tracing()
 
@@ -58,7 +60,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "escalate_to_human",
-            "description": "Escalate a case to a human agent when the request is outside policy, unclear, or repeated.",
+            "description": "Escalate a case to a human agent ONLY when: (1) a refund is confirmed eligible and needs human processing, (2) the item is damaged or an exchange is requested, (3) the customer is repeating the same question, or (4) the request is genuinely unclear. Do NOT call this for straightforward denials — cancelled orders, already-refunded orders, and out-of-window requests should be denied directly without escalation.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -84,9 +86,10 @@ SYSTEM_PROMPT = f"""You are a customer support agent for an online store. You he
 Policy rules you must follow without exception:
 {_policy.read_text()}
 
-Critical behavioral rules — follow these exactly:
-- When check_refund_eligibility returns eligible=True, you MUST immediately call escalate_to_human. Never ask "would you like me to proceed" — escalate without asking.
-- When a customer mentions a damaged item, you MUST immediately call escalate_to_human. Do not consider the order status. Do not tell them to contact you later.
+Critical behavioral rules:
+- When check_refund_eligibility returns eligible=True: immediately call escalate_to_human and tell the customer a human agent will process it. Never ask "would you like me to proceed."
+- When check_refund_eligibility returns eligible=False: explain the reason for denial to the customer. Do NOT call escalate_to_human. Do NOT escalate cancelled, already-refunded, or out-of-window orders.
+- If a customer mentions a damaged item: immediately call escalate_to_human regardless of order status.
 - Always look up the order before making any decision. Never guess order details."""
 
 tracer = trace.get_tracer(__name__)

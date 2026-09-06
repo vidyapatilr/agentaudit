@@ -1,5 +1,5 @@
-from phoenix.otel import register
 from openinference.instrumentation.openai import OpenAIInstrumentor
+from phoenix.otel import register
 
 
 def setup_tracing():

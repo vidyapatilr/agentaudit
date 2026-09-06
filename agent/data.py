@@ -1,7 +1,8 @@
 import os
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 # Load enviornment variables
 load_dotenv()
@@ -38,79 +39,81 @@ def seed_if_empty():
         if session.query(Order).first() is not None:
             return
 
-        session.add_all([
-            # Normal happy-path orders, well within the 15-day window.
-            Order(
-                order_id="A1001",
-                customer_id="C001",
-                status="delivered",
-                amount=49.99,
-                refund_eligible=True,
-                days_since_purchase=3,
-            ),
-            Order(
-                order_id="A1002",
-                customer_id="C002",
-                status="delivered",
-                amount=89.50,
-                refund_eligible=True,
-                days_since_purchase=10,
-            ),
-            # Boundary: exactly at the 15-day cutoff -> still eligible.
-            Order(
-                order_id="A1003",
-                customer_id="C003",
-                status="delivered",
-                amount=25.00,
-                refund_eligible=True,
-                days_since_purchase=15,
-            ),
-            # Boundary: one day past the cutoff -> no longer eligible.
-            Order(
-                order_id="A1004",
-                customer_id="C004",
-                status="delivered",
-                amount=60.00,
-                refund_eligible=False,
-                days_since_purchase=16,
-            ),
-            # Negative case: already refunded, status blocks it regardless of days.
-            Order(
-                order_id="A1005",
-                customer_id="C005",
-                status="refunded",
-                amount=40.00,
-                refund_eligible=False,
-                days_since_purchase=5,
-            ),
-            # Negative case: cancelled order.
-            Order(
-                order_id="A1006",
-                customer_id="C006",
-                status="cancelled",
-                amount=75.00,
-                refund_eligible=False,
-                days_since_purchase=2,
-            ),
-            # Edge case: not delivered yet, refund doesn't apply.
-            Order(
-                order_id="A1007",
-                customer_id="C007",
-                status="in_transit",
-                amount=120.00,
-                refund_eligible=False,
-                days_since_purchase=1,
-            ),
-            # High-amount order, useful later for a guardrail check.
-            Order(
-                order_id="A1008",
-                customer_id="C008",
-                status="delivered",
-                amount=999.99,
-                refund_eligible=True,
-                days_since_purchase=1,
-            ),
-        ])
+        session.add_all(
+            [
+                # Normal happy-path orders, well within the 15-day window.
+                Order(
+                    order_id="A1001",
+                    customer_id="C001",
+                    status="delivered",
+                    amount=49.99,
+                    refund_eligible=True,
+                    days_since_purchase=3,
+                ),
+                Order(
+                    order_id="A1002",
+                    customer_id="C002",
+                    status="delivered",
+                    amount=89.50,
+                    refund_eligible=True,
+                    days_since_purchase=10,
+                ),
+                # Boundary: exactly at the 15-day cutoff -> still eligible.
+                Order(
+                    order_id="A1003",
+                    customer_id="C003",
+                    status="delivered",
+                    amount=25.00,
+                    refund_eligible=True,
+                    days_since_purchase=15,
+                ),
+                # Boundary: one day past the cutoff -> no longer eligible.
+                Order(
+                    order_id="A1004",
+                    customer_id="C004",
+                    status="delivered",
+                    amount=60.00,
+                    refund_eligible=False,
+                    days_since_purchase=16,
+                ),
+                # Negative case: already refunded, status blocks it regardless of days.
+                Order(
+                    order_id="A1005",
+                    customer_id="C005",
+                    status="refunded",
+                    amount=40.00,
+                    refund_eligible=False,
+                    days_since_purchase=5,
+                ),
+                # Negative case: cancelled order.
+                Order(
+                    order_id="A1006",
+                    customer_id="C006",
+                    status="cancelled",
+                    amount=75.00,
+                    refund_eligible=False,
+                    days_since_purchase=2,
+                ),
+                # Edge case: not delivered yet, refund doesn't apply.
+                Order(
+                    order_id="A1007",
+                    customer_id="C007",
+                    status="in_transit",
+                    amount=120.00,
+                    refund_eligible=False,
+                    days_since_purchase=1,
+                ),
+                # High-amount order, useful later for a guardrail check.
+                Order(
+                    order_id="A1008",
+                    customer_id="C008",
+                    status="delivered",
+                    amount=999.99,
+                    refund_eligible=True,
+                    days_since_purchase=1,
+                ),
+            ]
+        )
         session.commit()
 
 
