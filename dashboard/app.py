@@ -7,6 +7,7 @@ st.set_page_config(page_title="AgentAudit Dashboard", layout="wide")
 
 st.title("AgentAudit Dashboard")
 st.caption("Eval results and guardrail summary for the customer support agent")
+st.caption(f"Last run: {data.get('run_at', 'unknown')}")
 
 results_path = Path(__file__).resolve().parent.parent / "evals" / "results.json"
 print(f"Looking for results at: {results_path}")

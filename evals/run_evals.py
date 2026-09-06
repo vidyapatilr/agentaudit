@@ -4,6 +4,7 @@ from pathlib import Path
 from agent.agent import run_agent
 from agent.data import seed_if_empty
 from evals.judges import EVAL_CASES, judge_response
+from datetime import datetime, timezone
 
 
 def run_evals():
@@ -53,6 +54,7 @@ def run_evals():
     print("=" * 60)
 
     output = {
+        "run_at": datetime.now(timezone.utc).isoformat(),
         "total": len(results),
         "passed": passed,
         "failed": failed,
