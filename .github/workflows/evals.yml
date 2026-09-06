@@ -39,4 +39,5 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/agentaudit
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DISABLE_TRACING: "true"
         run: uv run python -m evals.run_evals
