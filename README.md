@@ -58,19 +58,19 @@ Arize Phoenix (tracing) + Streamlit (eval dashboard)
 ```bash
 docker compose up -d
 
-**2. Start Tracing
+**2. Start Tracing**
 ```bash
 uv run phoenix serve
 
-**3. Run the agent
+**3. Run the agent**
 ```bash
 uv run python -m agent.agent
 
-**4. Run Evals
+**4. Run Evals**
 ```bash
 uv run python -m evals.run_evals
 
-**5. View the dashboard
+**5. View the dashboard**
 ```bash
 uv run streamlit run dashboard/app.py
 
@@ -84,7 +84,7 @@ tracing/        # Arize Phoenix setup
 dashboard/      # Streamlit eval dashboard
 .github/        # CI workflow
 
-CI
+## CI
 Every push to main triggers a full eval run on GitHub Actions. Results are committed back to evals/results.json and reflected in the dashboard.
 
 What I would do differently in production
