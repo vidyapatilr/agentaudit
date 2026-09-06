@@ -42,3 +42,11 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DISABLE_TRACING: "true"
         run: uv run python -m evals.run_evals
+
+      - name: Save results to repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add evals/results.json
+          git diff --staged --quiet || git commit -m "Update eval results [skip ci]"
+          git push

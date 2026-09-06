@@ -133,7 +133,6 @@ def run_agent(user_message: str) -> str:
         # No tool call — model gave a final text answer, we're done.
         if not message.tool_calls:
             final_response = message.content
-            print(f"[DEBUG RAW RESPONSE] {final_response}")
 
             rules_check = check_rules(final_response, tool_results)
             if not rules_check["passed"]:
