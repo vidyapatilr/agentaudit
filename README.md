@@ -87,7 +87,7 @@ dashboard/      # Streamlit eval dashboard
 ## CI
 Every push to main triggers a full eval run on GitHub Actions. Results are committed back to evals/results.json and reflected in the dashboard.
 
-What I would do differently in production
+## What I would do differently in production
 Use Arize cloud instead of local Phoenix so CI traces are captured
 Add structured logging for operational errors (database down, API timeouts)
 Expand the golden dataset with more adversarial and edge cases
